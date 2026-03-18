@@ -2,22 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Camera Motion Detector</title>
+  <title>Camera AI Detector</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="stylesheet" href="style.css">
+
+  <!-- AI Models -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
 </head>
 <body>
 
 <div class="container">
-  <h2>Camera Motion Detector</h2>
+  <h2>Camera Motion + AI Detector</h2>
 
   <video id="video" autoplay playsinline></video>
 
-  <button onclick="startCamera()">Start Camera</button>
-  <button onclick="stopCamera()">Stop Camera</button>
+  <div class="controls">
+    <button onclick="startCamera()">Start Camera</button>
+    <button onclick="stopCamera()">Stop Camera</button>
+  </div>
 
   <p id="status">Status: Waiting...</p>
+
+  <h3>Captured Images</h3>
+  <div id="gallery"></div>
 </div>
+
+<!-- 🔊 Sound -->
+<audio id="alertSound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
 
 <script src="script.js"></script>
 </body>
