@@ -1,32 +1,58 @@
-# Camera Motion Detector (Web)
+# Camera Motion + AI Detector
 
-A simple web-based **camera motion detection app** built using HTML, CSS, and JavaScript.  
-This project uses the device camera to detect motion in real-time.
+A web-based project that uses your device camera to detect motion, trigger alerts, capture images, and identify objects using AI.
 
 ---
 
 ## 🚀 Features
 
-- Access device camera (mobile supported)  
-- Detect motion using frame comparison  
-- Start/Stop camera  
-- Real-time status updates  
-- Fully responsive UI  
+- Camera access (mobile supported)  
+- Motion detection  
+- Sound alert on motion  
+- AI object detection (COCO-SSD)  
+- Auto image capture  
+- Image download (auto + manual)  
+- Responsive design  
 
 ---
 
-## ⚠️ Important Note
+## ⚠️ Important Notes
 
-This project **does NOT detect hidden cameras**.  
-Web browsers cannot scan the environment for devices.
-
-It only detects **motion using your device camera**.
+- This does NOT detect hidden cameras  
+- Works best in Chrome mobile browser  
+- AI may be slow on low-end devices  
 
 ---
 
 ## 🛠️ Technologies Used
 
-- HTML5  
-- CSS3  
+- HTML  
+- CSS  
 - JavaScript  
-- Web APIs (getUserMedia, Canvas)
+- TensorFlow.js  
+- Canvas API  
+
+---
+
+## ▶️ How to Run
+
+1. Open `index.html`  
+2. Click "Start Camera"  
+3. Allow camera permission  
+4. Move to trigger motion detection  
+
+---
+
+## 📈 Future Improvements
+
+- Draw bounding boxes  
+- Record video  
+- Save to cloud (Firebase)  
+- Android app version  
+
+---
+
+## 👨‍💻 Author
+
+Your Name  
+GitHub: https://github.com/your-username
