@@ -7,45 +7,51 @@
 
   <link rel="stylesheet" href="style.css">
 
+  <!-- JS -->
   <script type="module" src="script.js"></script>
 </head>
 <body>
 
 <div class="container">
 
-  <h2>Camera App</h2>
+  <!-- TITLE -->
+  <h2>📸 Camera AI Detector</h2>
 
-  <!-- AUTH -->
+  <!-- AUTH CARD -->
   <div class="auth">
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
+    <input id="email" type="email" placeholder="Enter Email">
+    <input id="password" type="password" placeholder="Enter Password">
 
     <button onclick="signup()">Signup</button>
     <button onclick="login()">Login</button>
     <button onclick="logout()">Logout</button>
   </div>
 
-  <!-- CAMERA -->
+  <!-- CAMERA CARD -->
   <div class="video-wrapper">
     <video id="video" autoplay playsinline></video>
   </div>
 
-  <div>
-    <button onclick="startCamera()">Start</button>
-    <button onclick="stopCamera()">Stop</button>
-    <button onclick="capture()">Capture</button>
+  <!-- CONTROLS -->
+  <div class="controls">
+    <button onclick="startCamera()">▶ Start</button>
+    <button onclick="stopCamera()">⏹ Stop</button>
+    <button onclick="capture()">📸 Capture</button>
   </div>
 
+  <!-- STATUS -->
   <p id="status">Idle</p>
 
-  <h3>Gallery</h3>
+  <!-- GALLERY -->
+  <h3>🖼 Gallery</h3>
   <div id="gallery"></div>
 
 </div>
 
-<!-- MODAL -->
+<!-- MODAL PREVIEW -->
 <div id="modal" class="modal">
   <span id="closeModal">&times;</span>
+
   <span id="prevBtn" class="nav-btn">&#10094;</span>
   <img id="modalImg">
   <span id="nextBtn" class="nav-btn">&#10095;</span>
