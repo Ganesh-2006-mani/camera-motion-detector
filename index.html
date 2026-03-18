@@ -7,16 +7,22 @@
 
   <link rel="stylesheet" href="style.css">
 
-  <!-- AI Models -->
+  <!-- AI -->
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+
+  <!-- Firebase (MODULAR SDK) -->
+  <script type="module" src="script.js"></script>
 </head>
 <body>
 
 <div class="container">
   <h2>Camera Motion + AI Detector</h2>
 
-  <video id="video" autoplay playsinline></video>
+  <div class="video-wrapper">
+    <video id="video" autoplay playsinline></video>
+    <canvas id="overlay"></canvas>
+  </div>
 
   <div class="controls">
     <button onclick="startCamera()">Start Camera</button>
@@ -29,9 +35,7 @@
   <div id="gallery"></div>
 </div>
 
-<!-- 🔊 Sound -->
 <audio id="alertSound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
 
-<script src="script.js"></script>
 </body>
 </html>
