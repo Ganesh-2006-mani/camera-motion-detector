@@ -1,48 +1,83 @@
-# Camera AI Detector
+# 📸 Camera AI Detector Web App
 
-Advanced browser-based camera app with motion detection, AI object detection, and Firebase storage.
+A full-featured web application that uses your device camera to capture images, manage them with cloud storage, and provide a user-based dashboard with authentication.
 
 ---
 
 ## 🚀 Features
 
-- Motion detection  
-- Sound alert  
-- AI object detection  
-- Bounding boxes  
-- Image capture  
-- Auto + manual download  
-- Firebase cloud upload  
+### 🔐 Authentication
 
----
+* User Signup & Login
+* Logout functionality
+* Session management using Firebase Auth
 
-## ⚠️ Notes
+### 📷 Camera System
 
-- Not a hidden camera detector  
-- Works best in Chrome mobile  
-- Requires internet for AI + Firebase  
+* Start / Stop camera (fully optimized)
+* Capture images from live video
+* Stable camera lifecycle (no crashes or duplicate streams)
+
+### ☁️ Cloud Integration
+
+* Upload images to Firebase Storage
+* Store metadata in Firestore
+* User-specific image storage
+
+### 🖼️ Gallery Dashboard
+
+* View all captured images
+* Delete images (removes from UI + Firebase)
+* Persistent data across sessions
+
+### 🔍 Image Preview (Modal)
+
+* Fullscreen image preview
+* Next / Previous navigation
+* Keyboard controls:
+
+  * → Next image
+  * ← Previous image
+  * ESC to close
 
 ---
 
 ## 🛠️ Tech Stack
 
-- HTML, CSS, JavaScript  
-- TensorFlow.js (COCO SSD)  
-- Firebase Storage  
+* HTML5
+* CSS3
+* JavaScript (Vanilla)
+* Firebase:
+
+  * Authentication
+  * Firestore Database
+  * Cloud Storage
 
 ---
 
-## ▶️ Run
+## 📂 Project Structure
 
-1. Add Firebase config  
-2. Open index.html  
-3. Allow camera  
-4. Test motion + AI  
+```
+camera-ai-detector/
+│
+├── index.html
+├── style.css
+├── script.js
+└── README.md
+```
 
 ---
 
-## 📈 Future Scope
+## ⚙️ Setup Instructions
 
-- Video recording  
-- User login  
-- Image history dashboard  
+### 1. Create Firebase Project
+
+Go to Firebase Console and create a new project.
+
+---
+
+### 2. Enable Services
+
+Enable the following:
+
+* Authentication (
