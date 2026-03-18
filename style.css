@@ -1,13 +1,61 @@
-body {
-  background: #111;
-  color: white;
-  text-align: center;
-  font-family: Arial;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
 }
 
+body {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #fff;
+  min-height: 100vh;
+}
+
+/* CONTAINER */
 .container {
-  max-width: 500px;
-  margin: auto;
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+/* TITLE */
+h2 {
+  margin-bottom: 15px;
+  font-size: 28px;
+}
+
+/* AUTH CARD */
+.auth {
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.auth input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+}
+
+.auth button {
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  cursor: pointer;
+}
+
+/* VIDEO CARD */
+.video-wrapper {
+  background: #1e293b;
+  padding: 10px;
+  border-radius: 10px;
 }
 
 video {
@@ -15,29 +63,72 @@ video {
   border-radius: 10px;
 }
 
-button {
-  padding: 10px;
-  margin: 5px;
-  border: none;
-  background: #3498db;
-  color: white;
-  cursor: pointer;
+/* BUTTON GROUP */
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }
 
+.controls button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: #22c55e;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.controls button:nth-child(2) {
+  background: #ef4444;
+}
+
+.controls button:nth-child(3) {
+  background: #3b82f6;
+}
+
+/* STATUS */
+#status {
+  margin: 10px 0;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* GALLERY */
 #gallery {
+  margin-top: 10px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+#gallery div {
+  background: #1e293b;
+  padding: 8px;
+  border-radius: 10px;
+  transition: transform 0.2s;
+}
+
+#gallery div:hover {
+  transform: scale(1.03);
 }
 
 #gallery img {
   width: 100%;
-  cursor: pointer;
+  border-radius: 8px;
 }
 
 #gallery button {
-  background: red;
+  margin-top: 5px;
   width: 100%;
+  padding: 6px;
+  border-radius: 5px;
+  border: none;
+  background: #ef4444;
+  color: white;
+  cursor: pointer;
 }
 
 /* MODAL */
@@ -48,28 +139,47 @@ button {
   height: 100%;
   background: rgba(0,0,0,0.9);
   top: 0;
+  left: 0;
+  z-index: 999;
 }
 
 .modal img {
+  display: block;
+  margin: 60px auto;
   max-width: 90%;
   max-height: 80%;
-  margin-top: 50px;
+  border-radius: 10px;
 }
 
+/* CLOSE */
 #closeModal {
   position: absolute;
-  right: 20px;
+  right: 30px;
   top: 20px;
   font-size: 30px;
   cursor: pointer;
 }
 
+/* NAV */
 .nav-btn {
   position: absolute;
   top: 50%;
   font-size: 40px;
   cursor: pointer;
+  transform: translateY(-50%);
+  padding: 10px;
 }
 
 #prevBtn { left: 10px; }
 #nextBtn { right: 10px; }
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .auth {
+    flex-direction: column;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+}
