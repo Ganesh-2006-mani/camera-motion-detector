@@ -1,58 +1,48 @@
-# Camera Motion + AI Detector
+# Camera AI Detector
 
-A web-based project that uses your device camera to detect motion, trigger alerts, capture images, and identify objects using AI.
+Advanced browser-based camera app with motion detection, AI object detection, and Firebase storage.
 
 ---
 
 ## 🚀 Features
 
-- Camera access (mobile supported)  
 - Motion detection  
-- Sound alert on motion  
-- AI object detection (COCO-SSD)  
-- Auto image capture  
-- Image download (auto + manual)  
-- Responsive design  
+- Sound alert  
+- AI object detection  
+- Bounding boxes  
+- Image capture  
+- Auto + manual download  
+- Firebase cloud upload  
 
 ---
 
-## ⚠️ Important Notes
+## ⚠️ Notes
 
-- This does NOT detect hidden cameras  
-- Works best in Chrome mobile browser  
-- AI may be slow on low-end devices  
-
----
-
-## 🛠️ Technologies Used
-
-- HTML  
-- CSS  
-- JavaScript  
-- TensorFlow.js  
-- Canvas API  
+- Not a hidden camera detector  
+- Works best in Chrome mobile  
+- Requires internet for AI + Firebase  
 
 ---
 
-## ▶️ How to Run
+## 🛠️ Tech Stack
 
-1. Open `index.html`  
-2. Click "Start Camera"  
-3. Allow camera permission  
-4. Move to trigger motion detection  
-
----
-
-## 📈 Future Improvements
-
-- Draw bounding boxes  
-- Record video  
-- Save to cloud (Firebase)  
-- Android app version  
+- HTML, CSS, JavaScript  
+- TensorFlow.js (COCO SSD)  
+- Firebase Storage  
 
 ---
 
-## 👨‍💻 Author
+## ▶️ Run
 
-Your Name  
-GitHub: https://github.com/your-username
+1. Add Firebase config  
+2. Open index.html  
+3. Allow camera  
+4. Test motion + AI  
+
+---
+
+## 📈 Future Scope
+
+- Video recording  
+- User login  
+- Image history dashboard  
