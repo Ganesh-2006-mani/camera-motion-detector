@@ -1,184 +1,198 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getStorage, ref, uploadString } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+import {
+  getAuth, createUserWithEmailAndPassword,
+  signInWithEmailAndPassword, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+import { getStorage, ref, uploadString, deleteObject }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+import { getFirestore, collection, addDoc, getDocs }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// 🔥 CONFIG
 const firebaseConfig = {
   apiKey: "YOUR_KEY",
   authDomain: "YOUR_DOMAIN",
   projectId: "YOUR_ID",
   storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "XXXX",
-  appId: "XXXX"
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const storage = getStorage(app);
+const db = getFirestore(app);
 
-const video = document.getElementById("video");
-const overlay = document.getElementById("overlay");
-const ctxOverlay = overlay.getContext("2d");
+// 🔥 GLOBALS
+let stream = null;
+let isCameraRunning = false;
 
-const statusText = document.getElementById("status");
-const alertSound = document.getElementById("alertSound");
+let images = [];
+let currentIndex = 0;
 
-let stream;
-let previousFrame;
-let model;
-let lastCaptureTime = 0;
+// 🔥 AUTH
+window.signup = () =>
+  createUserWithEmailAndPassword(auth, email(), pass());
 
-// =====================
-// START CAMERA
-// =====================
-window.startCamera = async function () {
+window.login = () =>
+  signInWithEmailAndPassword(auth, email(), pass());
+
+window.logout = () => signOut(auth);
+
+function email() {
+  return document.getElementById("email").value;
+}
+function pass() {
+  return document.getElementById("password").value;
+}
+
+// 🔥 SESSION
+onAuthStateChanged(auth, (user) => {
+  if (user) loadImages(user.uid);
+  else document.getElementById("gallery").innerHTML = "";
+});
+
+// 🔥 CAMERA START
+window.startCamera = async () => {
+  if (isCameraRunning) return;
+
   try {
     stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+    const video = document.getElementById("video");
     video.srcObject = stream;
 
-    loadModel();
-    detectMotion();
-  } catch {
-    alert("Camera permission denied");
+    video.onloadedmetadata = () => video.play();
+
+    isCameraRunning = true;
+    document.getElementById("status").innerText = "Camera Started";
+
+  } catch (e) {
+    console.log("Camera error", e);
   }
 };
 
-// =====================
-// STOP CAMERA
-// =====================
-window.stopCamera = function () {
+// 🔥 CAMERA STOP (FIXED)
+window.stopCamera = () => {
+  const video = document.getElementById("video");
+
   if (stream) {
-    stream.getTracks().forEach(t => t.stop());
+    stream.getTracks().forEach(track => track.stop());
   }
+
+  video.pause();
+  video.srcObject = null;
+
+  stream = null;
+  isCameraRunning = false;
+
+  document.getElementById("status").innerText = "Camera Stopped";
 };
 
-// =====================
-// MOTION DETECTION
-// =====================
-function detectMotion() {
+// 🔥 CAPTURE
+window.capture = () => {
+  if (!isCameraRunning) return;
+
+  const video = document.getElementById("video");
+
   const canvas = document.createElement("canvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
   const ctx = canvas.getContext("2d");
+  ctx.drawImage(video, 0, 0);
 
-  setInterval(() => {
-    if (!video.videoWidth) return;
+  const dataURL = canvas.toDataURL();
+  const user = auth.currentUser;
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+  const path = `images/${user.uid}/${Date.now()}.png`;
 
-    ctx.drawImage(video, 0, 0);
+  images.unshift(dataURL);
 
-    const currentFrame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  createCard(dataURL, path, 0);
+  upload(dataURL, path);
+};
 
-    if (previousFrame) {
-      let diff = 0;
-
-      for (let i = 0; i < currentFrame.data.length; i += 4) {
-        diff += Math.abs(currentFrame.data[i] - previousFrame.data[i]);
-      }
-
-      if (diff > 5000000) {
-        statusText.innerText = "⚠️ Motion Detected!";
-        playSound();
-
-        const now = Date.now();
-        if (now - lastCaptureTime > 5000) {
-          captureImage(canvas);
-          lastCaptureTime = now;
-        }
-
-      } else {
-        statusText.innerText = "No motion";
-      }
-    }
-
-    previousFrame = currentFrame;
-  }, 500);
-}
-
-// =====================
-// SOUND
-// =====================
-function playSound() {
-  alertSound.currentTime = 0;
-  alertSound.play();
-}
-
-// =====================
-// CAPTURE + DOWNLOAD + FIREBASE
-// =====================
-function captureImage(canvas) {
-  const dataURL = canvas.toDataURL("image/png");
-
-  uploadToFirebase(dataURL);
-
+// 🔥 CREATE CARD
+function createCard(src, path, index) {
   const img = document.createElement("img");
-  img.src = dataURL;
+  img.src = src;
 
   const btn = document.createElement("button");
-  btn.innerText = "Download";
-  btn.onclick = () => downloadImage(dataURL);
+  btn.innerText = "Delete";
 
   const wrap = document.createElement("div");
   wrap.appendChild(img);
   wrap.appendChild(btn);
 
+  img.onclick = () => openModal(index);
+
+  btn.onclick = async () => {
+    await deleteObject(ref(storage, path));
+    wrap.remove();
+    images.splice(index, 1);
+  };
+
   document.getElementById("gallery").prepend(wrap);
-
-  downloadImage(dataURL);
 }
 
-// =====================
-// DOWNLOAD
-// =====================
-function downloadImage(dataURL) {
-  const a = document.createElement("a");
-  a.href = dataURL;
-  a.download = "capture_" + Date.now() + ".png";
-  a.click();
+// 🔥 UPLOAD
+async function upload(dataURL, path) {
+  await uploadString(ref(storage, path), dataURL, "data_url");
+
+  await addDoc(collection(db, "images"), {
+    path,
+    userId: auth.currentUser.uid
+  });
 }
 
-// =====================
-// FIREBASE UPLOAD
-// =====================
-async function uploadToFirebase(dataURL) {
-  const fileRef = ref(storage, "images/" + Date.now() + ".png");
-  await uploadString(fileRef, dataURL, "data_url");
-}
+// 🔥 LOAD IMAGES
+async function loadImages(uid) {
+  const snap = await getDocs(collection(db, "images"));
 
-// =====================
-// AI MODEL
-// =====================
-async function loadModel() {
-  model = await cocoSsd.load();
-  detectObjects();
-}
+  images = [];
+  document.getElementById("gallery").innerHTML = "";
 
-// =====================
-// OBJECT DETECTION + BOXES
-// =====================
-function detectObjects() {
-  setInterval(async () => {
-    if (!model || !video.videoWidth) return;
+  snap.forEach(doc => {
+    const d = doc.data();
 
-    overlay.width = video.videoWidth;
-    overlay.height = video.videoHeight;
+    if (d.userId === uid) {
+      const url = `https://firebasestorage.googleapis.com/v0/b/YOUR_BUCKET/o/${encodeURIComponent(d.path)}?alt=media`;
 
-    const predictions = await model.detect(video);
-
-    ctxOverlay.clearRect(0, 0, overlay.width, overlay.height);
-
-    predictions.forEach(p => {
-      const [x, y, w, h] = p.bbox;
-
-      ctxOverlay.strokeStyle = "red";
-      ctxOverlay.lineWidth = 2;
-      ctxOverlay.strokeRect(x, y, w, h);
-
-      ctxOverlay.fillStyle = "red";
-      ctxOverlay.font = "14px Arial";
-      ctxOverlay.fillText(p.class, x, y > 10 ? y - 5 : 10);
-    });
-
-    if (predictions.length) {
-      statusText.innerText = "Detected: " + predictions.map(p => p.class).join(", ");
+      images.push(url);
+      createCard(url, d.path, images.length - 1);
     }
-
-  }, 1000);
+  });
 }
+
+// 🔥 MODAL
+const modal = document.getElementById("modal");
+const modalImg = document.getElementById("modalImg");
+
+function openModal(index) {
+  currentIndex = index;
+  modal.style.display = "block";
+  modalImg.src = images[index];
+}
+
+document.getElementById("closeModal").onclick = () => {
+  modal.style.display = "none";
+};
+
+document.getElementById("nextBtn").onclick = () => {
+  currentIndex = (currentIndex + 1) % images.length;
+  modalImg.src = images[currentIndex];
+};
+
+document.getElementById("prevBtn").onclick = () => {
+  currentIndex = (currentIndex - 1 + images.length) % images.length;
+  modalImg.src = images[currentIndex];
+};
+
+document.addEventListener("keydown", (e) => {
+  if (modal.style.display === "block") {
+    if (e.key === "ArrowRight") document.getElementById("nextBtn").click();
+    if (e.key === "ArrowLeft") document.getElementById("prevBtn").click();
+    if (e.key === "Escape") modal.style.display = "none";
+  }
+});
