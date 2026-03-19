@@ -4,13 +4,15 @@ import {
   signInWithEmailAndPassword, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-import { getStorage, ref, uploadString, deleteObject }
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+import {
+  getStorage, ref, uploadString, deleteObject
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-import { getFirestore, collection, addDoc, getDocs }
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+  getFirestore, collection, addDoc, getDocs
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// 🔥 CONFIG
+// 🔥 CONFIG (PUT YOUR REAL VALUES)
 const firebaseConfig = {
   apiKey: "YOUR_KEY",
   authDomain: "YOUR_DOMAIN",
@@ -23,19 +25,30 @@ const auth = getAuth(app);
 const storage = getStorage(app);
 const db = getFirestore(app);
 
-// 🔥 GLOBALS
+// GLOBALS
 let stream = null;
 let isCameraRunning = false;
-
 let images = [];
 let currentIndex = 0;
 
-// 🔥 AUTH
-window.signup = () =>
-  createUserWithEmailAndPassword(auth, email(), pass());
+// AUTH
+window.signup = async () => {
+  try {
+    await createUserWithEmailAndPassword(auth, email(), pass());
+    alert("Signup success");
+  } catch (e) {
+    alert(e.message);
+  }
+};
 
-window.login = () =>
-  signInWithEmailAndPassword(auth, email(), pass());
+window.login = async () => {
+  try {
+    await signInWithEmailAndPassword(auth, email(), pass());
+    alert("Login success");
+  } catch (e) {
+    alert(e.message);
+  }
+};
 
 window.logout = () => signOut(auth);
 
@@ -46,61 +59,56 @@ function pass() {
   return document.getElementById("password").value;
 }
 
-// 🔥 SESSION
+// SESSION
 onAuthStateChanged(auth, (user) => {
-  if (user) loadImages(user.uid);
-  else document.getElementById("gallery").innerHTML = "";
+  if (user) {
+    document.getElementById("authBox").style.display = "none";
+    document.getElementById("userBox").style.display = "block";
+    document.getElementById("userEmail").innerText = user.email;
+    loadImages(user.uid);
+    document.getElementById("status").innerText = "Logged in";
+  } else {
+    document.getElementById("authBox").style.display = "block";
+    document.getElementById("userBox").style.display = "none";
+    document.getElementById("gallery").innerHTML = "";
+    document.getElementById("status").innerText = "Not logged in";
+  }
 });
 
-// 🔥 CAMERA START
+// CAMERA
 window.startCamera = async () => {
   if (isCameraRunning) return;
 
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  const video = document.getElementById("video");
+  video.srcObject = stream;
 
-    const video = document.getElementById("video");
-    video.srcObject = stream;
-
-    video.onloadedmetadata = () => video.play();
-
-    isCameraRunning = true;
-    document.getElementById("status").innerText = "Camera Started";
-
-  } catch (e) {
-    console.log("Camera error", e);
-  }
+  isCameraRunning = true;
 };
 
-// 🔥 CAMERA STOP (FIXED)
 window.stopCamera = () => {
   const video = document.getElementById("video");
 
   if (stream) {
-    stream.getTracks().forEach(track => track.stop());
+    stream.getTracks().forEach(t => t.stop());
   }
 
-  video.pause();
   video.srcObject = null;
-
   stream = null;
   isCameraRunning = false;
-
-  document.getElementById("status").innerText = "Camera Stopped";
 };
 
-// 🔥 CAPTURE
+// CAPTURE
 window.capture = () => {
-  if (!isCameraRunning) return;
+  if (!isCameraRunning) return alert("Start camera first");
 
   const video = document.getElementById("video");
-
   const canvas = document.createElement("canvas");
+
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
 
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(video, 0, 0);
+  canvas.getContext("2d").drawImage(video, 0, 0);
 
   const dataURL = canvas.toDataURL();
   const user = auth.currentUser;
@@ -108,12 +116,11 @@ window.capture = () => {
   const path = `images/${user.uid}/${Date.now()}.png`;
 
   images.unshift(dataURL);
-
   createCard(dataURL, path, 0);
   upload(dataURL, path);
 };
 
-// 🔥 CREATE CARD
+// CARD
 function createCard(src, path, index) {
   const img = document.createElement("img");
   img.src = src;
@@ -136,7 +143,7 @@ function createCard(src, path, index) {
   document.getElementById("gallery").prepend(wrap);
 }
 
-// 🔥 UPLOAD
+// UPLOAD
 async function upload(dataURL, path) {
   await uploadString(ref(storage, path), dataURL, "data_url");
 
@@ -146,7 +153,7 @@ async function upload(dataURL, path) {
   });
 }
 
-// 🔥 LOAD IMAGES
+// LOAD
 async function loadImages(uid) {
   const snap = await getDocs(collection(db, "images"));
 
@@ -165,7 +172,7 @@ async function loadImages(uid) {
   });
 }
 
-// 🔥 MODAL
+// MODAL
 const modal = document.getElementById("modal");
 const modalImg = document.getElementById("modalImg");
 
@@ -175,9 +182,7 @@ function openModal(index) {
   modalImg.src = images[index];
 }
 
-document.getElementById("closeModal").onclick = () => {
-  modal.style.display = "none";
-};
+document.getElementById("closeModal").onclick = () => modal.style.display = "none";
 
 document.getElementById("nextBtn").onclick = () => {
   currentIndex = (currentIndex + 1) % images.length;
@@ -188,11 +193,3 @@ document.getElementById("prevBtn").onclick = () => {
   currentIndex = (currentIndex - 1 + images.length) % images.length;
   modalImg.src = images[currentIndex];
 };
-
-document.addEventListener("keydown", (e) => {
-  if (modal.style.display === "block") {
-    if (e.key === "ArrowRight") document.getElementById("nextBtn").click();
-    if (e.key === "ArrowLeft") document.getElementById("prevBtn").click();
-    if (e.key === "Escape") modal.style.display = "none";
-  }
-});
