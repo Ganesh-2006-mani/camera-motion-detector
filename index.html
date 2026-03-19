@@ -2,56 +2,53 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Camera AI Detector</title>
+  <title>Camera App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link rel="stylesheet" href="style.css">
-
-  <!-- JS -->
   <script type="module" src="script.js"></script>
 </head>
 <body>
 
 <div class="container">
 
-  <!-- TITLE -->
-  <h2>📸 Camera AI Detector</h2>
+  <h2>📸 Camera App</h2>
 
-  <!-- AUTH CARD -->
-  <div class="auth">
-    <input id="email" type="email" placeholder="Enter Email">
-    <input id="password" type="password" placeholder="Enter Password">
+  <!-- AUTH -->
+  <div class="auth" id="authBox">
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
 
     <button onclick="signup()">Signup</button>
     <button onclick="login()">Login</button>
+  </div>
+
+  <div id="userBox" style="display:none;">
+    <p id="userEmail"></p>
     <button onclick="logout()">Logout</button>
   </div>
 
-  <!-- CAMERA CARD -->
+  <!-- CAMERA -->
   <div class="video-wrapper">
     <video id="video" autoplay playsinline></video>
   </div>
 
-  <!-- CONTROLS -->
   <div class="controls">
-    <button onclick="startCamera()">▶ Start</button>
-    <button onclick="stopCamera()">⏹ Stop</button>
-    <button onclick="capture()">📸 Capture</button>
+    <button onclick="startCamera()">Start</button>
+    <button onclick="stopCamera()">Stop</button>
+    <button onclick="capture()">Capture</button>
   </div>
 
-  <!-- STATUS -->
-  <p id="status">Idle</p>
+  <p id="status">Not logged in</p>
 
-  <!-- GALLERY -->
-  <h3>🖼 Gallery</h3>
+  <h3>Gallery</h3>
   <div id="gallery"></div>
 
 </div>
 
-<!-- MODAL PREVIEW -->
+<!-- MODAL -->
 <div id="modal" class="modal">
   <span id="closeModal">&times;</span>
-
   <span id="prevBtn" class="nav-btn">&#10094;</span>
   <img id="modalImg">
   <span id="nextBtn" class="nav-btn">&#10095;</span>
