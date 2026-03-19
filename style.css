@@ -1,4 +1,5 @@
 body {
+  margin: 0;
   background: #0f172a;
   color: white;
   font-family: Arial;
@@ -6,20 +7,33 @@ body {
 }
 
 .container {
-  max-width: 600px;
+  max-width: 700px;
   margin: auto;
   padding: 20px;
 }
 
-input {
+.video-box {
+  background: #1e293b;
   padding: 10px;
-  margin: 5px;
+  border-radius: 10px;
 }
 
-button {
-  padding: 10px;
-  margin: 5px;
+video {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.controls button {
+  flex: 1;
+  padding: 12px;
   border: none;
+  border-radius: 8px;
   background: #3b82f6;
   color: white;
   cursor: pointer;
@@ -29,40 +43,41 @@ button {
   background: red;
 }
 
-video {
-  width: 100%;
-  border-radius: 10px;
+.controls button:nth-child(3) {
+  background: green;
 }
 
 #gallery {
+  margin-top: 15px;
   display: grid;
-  grid-template-columns: repeat(2,1fr);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 10px;
 }
 
-#gallery img {
+.card {
+  background: #1e293b;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.card img {
   width: 100%;
+  border-radius: 8px;
 }
 
-.modal {
-  display: none;
-  position: fixed;
-  background: rgba(0,0,0,0.9);
+.card button {
   width: 100%;
-  height: 100%;
-}
-
-.modal img {
-  max-width: 90%;
-  margin-top: 50px;
-}
-
-.nav-btn {
-  position: absolute;
-  top: 50%;
-  font-size: 40px;
+  margin-top: 5px;
+  padding: 6px;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
 }
 
-#prevBtn { left: 10px; }
-#nextBtn { right: 10px; }
+.download {
+  background: #22c55e;
+}
+
+.delete {
+  background: #ef4444;
+}
