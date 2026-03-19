@@ -1,189 +1,89 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getAuth, createUserWithEmailAndPassword,
-  signInWithEmailAndPassword, signOut, onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-import {
-  getStorage, ref, uploadString, deleteObject
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-
-import {
-  getFirestore, collection, addDoc, getDocs
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-// 🔥 REPLACE THIS WITH REAL CONFIG
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_ID",
-  storageBucket: "YOUR_BUCKET",
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const storage = getStorage(app);
-const db = getFirestore(app);
-
-// GLOBALS
 let stream = null;
 let isCameraRunning = false;
-let images = [];
-let currentIndex = 0;
 
-// AUTH
-window.signup = async () => {
-  try {
-    await createUserWithEmailAndPassword(auth, email(), pass());
-    alert("Signup success");
-  } catch (e) {
-    alert(e.message);
-  }
-};
-
-window.login = async () => {
-  try {
-    await signInWithEmailAndPassword(auth, email(), pass());
-    alert("Login success");
-  } catch (e) {
-    alert(e.message);
-  }
-};
-
-window.logout = () => signOut(auth);
-
-function email() {
-  return document.getElementById("email").value;
-}
-function pass() {
-  return document.getElementById("password").value;
-}
-
-// SESSION
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    document.getElementById("authBox").style.display = "none";
-    document.getElementById("userBox").style.display = "block";
-    document.getElementById("userEmail").innerText = user.email;
-    loadImages(user.uid);
-    document.getElementById("status").innerText = "Logged in";
-  } else {
-    document.getElementById("authBox").style.display = "block";
-    document.getElementById("userBox").style.display = "none";
-    document.getElementById("gallery").innerHTML = "";
-    document.getElementById("status").innerText = "Not logged in";
-  }
-});
-
-// CAMERA
-window.startCamera = async () => {
+// START CAMERA
+function startCamera() {
   if (isCameraRunning) return;
 
-  stream = await navigator.mediaDevices.getUserMedia({ video: true });
-  document.getElementById("video").srcObject = stream;
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(s => {
+      stream = s;
+      document.getElementById("video").srcObject = stream;
+      isCameraRunning = true;
+      document.getElementById("status").innerText = "Camera Started";
+    })
+    .catch(err => {
+      console.log(err);
+      alert("Camera access denied");
+    });
+}
 
-  isCameraRunning = true;
-};
+// STOP CAMERA
+function stopCamera() {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+  }
 
-window.stopCamera = () => {
-  if (stream) stream.getTracks().forEach(t => t.stop());
   document.getElementById("video").srcObject = null;
   stream = null;
   isCameraRunning = false;
-};
 
-// CAPTURE
-window.capture = () => {
-  if (!isCameraRunning) return alert("Start camera first");
+  document.getElementById("status").innerText = "Camera Stopped";
+}
+
+// CAPTURE IMAGE
+function capture() {
+  if (!isCameraRunning) {
+    alert("Start camera first");
+    return;
+  }
 
   const video = document.getElementById("video");
-  const canvas = document.createElement("canvas");
 
+  const canvas = document.createElement("canvas");
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
 
-  canvas.getContext("2d").drawImage(video, 0, 0);
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(video, 0, 0);
 
-  const dataURL = canvas.toDataURL();
-  const user = auth.currentUser;
+  const imageData = canvas.toDataURL("image/png");
 
-  const path = `images/${user.uid}/${Date.now()}.png`;
+  createCard(imageData);
+}
 
-  images.unshift(dataURL);
-  createCard(dataURL, path, 0);
-  upload(dataURL, path);
-};
+// CREATE CARD (image + buttons)
+function createCard(src) {
+  const card = document.createElement("div");
+  card.className = "card";
 
-// CARD
-function createCard(src, path, index) {
   const img = document.createElement("img");
   img.src = src;
 
-  const btn = document.createElement("button");
-  btn.innerText = "Delete";
+  // DOWNLOAD BUTTON
+  const downloadBtn = document.createElement("button");
+  downloadBtn.innerText = "Download";
+  downloadBtn.className = "download";
 
-  const wrap = document.createElement("div");
-  wrap.appendChild(img);
-  wrap.appendChild(btn);
-
-  img.onclick = () => openModal(index);
-
-  btn.onclick = async () => {
-    await deleteObject(ref(storage, path));
-    wrap.remove();
-    images.splice(index, 1);
+  downloadBtn.onclick = () => {
+    const a = document.createElement("a");
+    a.href = src;
+    a.download = "photo.png";
+    a.click();
   };
 
-  document.getElementById("gallery").prepend(wrap);
+  // DELETE BUTTON
+  const deleteBtn = document.createElement("button");
+  deleteBtn.innerText = "Delete";
+  deleteBtn.className = "delete";
+
+  deleteBtn.onclick = () => {
+    card.remove();
+  };
+
+  card.appendChild(img);
+  card.appendChild(downloadBtn);
+  card.appendChild(deleteBtn);
+
+  document.getElementById("gallery").prepend(card);
 }
-
-// UPLOAD
-async function upload(dataURL, path) {
-  await uploadString(ref(storage, path), dataURL, "data_url");
-
-  await addDoc(collection(db, "images"), {
-    path,
-    userId: auth.currentUser.uid
-  });
-}
-
-// LOAD
-async function loadImages(uid) {
-  const snap = await getDocs(collection(db, "images"));
-
-  images = [];
-  document.getElementById("gallery").innerHTML = "";
-
-  snap.forEach(doc => {
-    const d = doc.data();
-
-    if (d.userId === uid) {
-      const url = `https://firebasestorage.googleapis.com/v0/b/YOUR_BUCKET/o/${encodeURIComponent(d.path)}?alt=media`;
-
-      images.push(url);
-      createCard(url, d.path, images.length - 1);
-    }
-  });
-}
-
-// MODAL
-const modal = document.getElementById("modal");
-const modalImg = document.getElementById("modalImg");
-
-function openModal(index) {
-  currentIndex = index;
-  modal.style.display = "block";
-  modalImg.src = images[index];
-}
-
-document.getElementById("closeModal").onclick = () => modal.style.display = "none";
-
-document.getElementById("nextBtn").onclick = () => {
-  currentIndex = (currentIndex + 1) % images.length;
-  modalImg.src = images[currentIndex];
-};
-
-document.getElementById("prevBtn").onclick = () => {
-  currentIndex = (currentIndex - 1 + images.length) % images.length;
-  modalImg.src = images[currentIndex];
-};
