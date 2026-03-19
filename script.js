@@ -12,9 +12,9 @@ import {
   getFirestore, collection, addDoc, getDocs
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// 🔥 CONFIG (PUT YOUR REAL VALUES)
+// 🔥 REPLACE THIS WITH REAL CONFIG
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
+  apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_DOMAIN",
   projectId: "YOUR_ID",
   storageBucket: "YOUR_BUCKET",
@@ -80,20 +80,14 @@ window.startCamera = async () => {
   if (isCameraRunning) return;
 
   stream = await navigator.mediaDevices.getUserMedia({ video: true });
-  const video = document.getElementById("video");
-  video.srcObject = stream;
+  document.getElementById("video").srcObject = stream;
 
   isCameraRunning = true;
 };
 
 window.stopCamera = () => {
-  const video = document.getElementById("video");
-
-  if (stream) {
-    stream.getTracks().forEach(t => t.stop());
-  }
-
-  video.srcObject = null;
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  document.getElementById("video").srcObject = null;
   stream = null;
   isCameraRunning = false;
 };
