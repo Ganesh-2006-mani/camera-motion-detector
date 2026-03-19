@@ -2,55 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Camera App</title>
+  <title>Camera Detector</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link rel="stylesheet" href="style.css">
-  <script type="module" src="script.js"></script>
 </head>
 <body>
 
 <div class="container">
 
-  <h2>📸 Camera App</h2>
-
-  <!-- AUTH -->
-  <div id="authBox">
-    <input id="email" type="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-
-    <button onclick="signup()">Signup</button>
-    <button onclick="login()">Login</button>
-  </div>
-
-  <div id="userBox" style="display:none;">
-    <p id="userEmail"></p>
-    <button onclick="logout()">Logout</button>
-  </div>
+  <h2>📸 Camera Detector</h2>
 
   <!-- CAMERA -->
-  <video id="video" autoplay playsinline></video>
+  <div class="video-box">
+    <video id="video" autoplay playsinline></video>
+  </div>
 
+  <!-- CONTROLS -->
   <div class="controls">
     <button onclick="startCamera()">Start</button>
     <button onclick="stopCamera()">Stop</button>
     <button onclick="capture()">Capture</button>
   </div>
 
-  <p id="status">Not logged in</p>
+  <p id="status">Camera Off</p>
 
   <h3>Gallery</h3>
   <div id="gallery"></div>
 
 </div>
 
-<!-- MODAL -->
-<div id="modal" class="modal">
-  <span id="closeModal">&times;</span>
-  <span id="prevBtn" class="nav-btn">&#10094;</span>
-  <img id="modalImg">
-  <span id="nextBtn" class="nav-btn">&#10095;</span>
-</div>
-
+<script src="script.js"></script>
 </body>
 </html>
