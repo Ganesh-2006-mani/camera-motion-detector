@@ -1,71 +1,55 @@
-# 📸 Camera App with Firebase (Auth + Cloud + Gallery)
+# 📸 Camera Detector Web App
 
-A fully functional web application that allows users to authenticate, access their device camera, capture images, and manage them with cloud storage and a personalized dashboard.
+A simple and fully functional web application that allows users to access their device camera, capture photos, and manage them with download and delete options — all built using pure HTML, CSS, and JavaScript.
 
 ---
 
 ## 🚀 Features
 
-### 🔐 Authentication System
+### 📷 Camera Control
 
-* User Signup (Email/Password)
-* User Login with error handling
-* Logout functionality
-* Session persistence using Firebase Auth
-* Dynamic UI update based on login state
-
----
-
-### 📷 Camera System (Fixed & Stable)
-
-* Start / Stop camera properly
-* Prevents multiple camera instances
-* Clean camera shutdown (no freezing issues)
-* Restart camera without bugs
+* Start camera
+* Stop camera properly (no freezing issues)
+* Works on both desktop and mobile browsers
 
 ---
 
 ### 📸 Image Capture
 
-* Capture images directly from video stream
-* Instant preview in gallery
-* Prevent capture when camera is off
+* Capture images directly from live video
+* Instant preview after capture
+* Prevents capture when camera is off
 
 ---
 
-### ☁️ Cloud Storage Integration
+### 🖼️ Gallery System
 
-* Upload images to Firebase Storage
-* Store image metadata in Firestore
-* User-specific storage (each user has separate images)
-
----
-
-### 🖼️ Gallery Dashboard
-
-* View all uploaded images
-* Persistent data (saved across sessions)
-* Delete images:
-
-  * Removes from UI
-  * Removes from Firebase Storage
+* Displays all captured images
+* Responsive grid layout
+* Clean card-based design
 
 ---
 
-### 🔍 Image Preview (Modal Viewer)
+### ⬇️ Download Option
 
-* Fullscreen image preview
-* Next / Previous navigation
-* Smooth image switching
+* Download captured images instantly
+* Saves image as `.png` file
 
 ---
 
-### 🎨 UI Improvements
+### 🗑️ Delete Option
 
-* Clean layout structure
-* Responsive design (mobile-friendly)
-* Organized sections (Auth, Camera, Gallery)
-* Improved button styling and spacing
+* Remove images from gallery instantly
+* No reload required
+
+---
+
+### 🎨 UI / UX
+
+* Modern dark theme
+* Responsive layout (mobile-friendly)
+* Clean and simple interface
+* Easy-to-use controls
 
 ---
 
@@ -74,101 +58,64 @@ A fully functional web application that allows users to authenticate, access the
 * HTML5
 * CSS3
 * JavaScript (Vanilla)
-
-### Firebase Services:
-
-* Authentication
-* Firestore Database
-* Cloud Storage
+* Browser Camera API (`getUserMedia`)
 
 ---
 
 ## 📂 Project Structure
 
-```id="5npx0n"
-camera-app/
+```id="f8l2kq"
+camera-detector/
 │
-├── index.html      # UI layout
-├── style.css       # Styling & responsiveness
-├── script.js       # App logic + Firebase integration
+├── index.html
+├── style.css
+├── script.js
 └── README.md
 ```
 
 ---
 
-## ⚙️ Setup Instructions
+## ⚙️ How to Run
 
-### 1. Create Firebase Project
+1. Download or clone this repository
+2. Open `index.html` in your browser
 
-Go to Firebase Console and create a new project.
-
----
-
-### 2. Enable Required Services
-
-Enable:
-
-* Authentication → Email/Password
-* Firestore Database
-* Storage
+> ⚠️ Note: Camera access works only on:
+>
+> * HTTPS websites
+> * or `localhost`
 
 ---
 
-### 3. Add Firebase Configuration
+## ⚠️ Limitations
 
-Update this in `script.js`:
-
-```javascript id="1l0m4v"
-const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_ID",
-  storageBucket: "YOUR_BUCKET",
-};
-```
-
----
-
-### 4. Run the Project
-
-Open `index.html` in your browser.
-
-> ⚠️ Camera works only on HTTPS or localhost.
-
----
-
-## ⚠️ Known Limitations
-
-* No loading indicators (UX improvement needed)
-* Firestore query not optimized (fetches all data)
-* No Firebase security rules configured
-* Uses basic alert() for errors (not production-level)
-* No animations or advanced UI effects
+* No data persistence (images are lost after refresh)
+* No backend or database
+* No cloud storage
+* No advanced image processing
 
 ---
 
 ## 📈 Future Improvements
 
-* Add loading spinners & better UI feedback
-* Optimize Firestore queries (filter by userId)
-* Add image zoom & swipe gestures
-* Replace alert() with proper notification system
+* Save images using localStorage
+* Add camera switch (front/back for mobile)
+* Add image filters or effects
+* Add motion detection feature
 * Improve UI with animations and icons
-* Add Firebase security rules
 
 ---
 
 ## 🎯 Learning Outcomes
 
-This project demonstrates:
+This project helps you understand:
 
-* Camera API usage (start/stop lifecycle management)
-* Authentication flow (signup/login/logout)
-* State management (user session, gallery, modal navigation)
-* Cloud storage handling with Firebase
-* Database integration using Firestore
-* CRUD operations (create & delete images)
-* Responsive UI design
+* Camera API usage (`getUserMedia`)
+* DOM manipulation
+* Event handling
+* Image capture using canvas
+* Dynamic UI updates
+* Basic state management
 
 ---
 
